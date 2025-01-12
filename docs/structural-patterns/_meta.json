@@ -1,0 +1,31 @@
+{
+  "index": "结构型模式概述",
+  "adapter": {
+    "title": "适配器模式",
+    "type": "page"
+  },
+  "bridge": {
+    "title": "桥接模式",
+    "type": "page"
+  },
+  "composite": {
+    "title": "组合模式",
+    "type": "page"
+  },
+  "decorator": {
+    "title": "装饰器模式",
+    "type": "page"
+  },
+  "facade": {
+    "title": "外观模式",
+    "type": "page"
+  },
+  "flyweight": {
+    "title": "享元模式",
+    "type": "page"
+  },
+  "proxy": {
+    "title": "代理模式",
+    "type": "page"
+  }
+}

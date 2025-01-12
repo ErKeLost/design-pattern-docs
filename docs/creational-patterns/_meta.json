@@ -1,0 +1,23 @@
+{
+  "index": "创建型模式概述",
+  "singleton": {
+    "title": "单例模式",
+    "type": "page"
+  },
+  "factory-method": {
+    "title": "工厂方法模式",
+    "type": "page"
+  },
+  "abstract-factory": {
+    "title": "抽象工厂模式",
+    "type": "page"
+  },
+  "builder": {
+    "title": "建造者模式",
+    "type": "page"
+  },
+  "prototype": {
+    "title": "原型模式",
+    "type": "page"
+  }
+}

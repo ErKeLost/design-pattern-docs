@@ -1,16 +1,16 @@
-[
-  {
-    "text": "Guide",
-    "link": "/guide/",
-    "activeMatch": "/guide/"
+{
+  "index": "设计模式简介",
+  "singleton": "介绍",
+  "creational-patterns": {
+    "title": "创建型模式",
+    "type": "dir"
   },
-  {
-    "text": "Hello World",
-    "link": "/hello/",
-    "activeMatch": "/hello/"
+  "structural-patterns": {
+    "title": "结构型模式",
+    "type": "dir"
   },
-  {
-    "text": "API",
-    "link": "https://rspress.dev/api/index.html"
+  "behavioral-patterns": {
+    "title": "行为型模式",
+    "type": "dir"
   }
-]
+}

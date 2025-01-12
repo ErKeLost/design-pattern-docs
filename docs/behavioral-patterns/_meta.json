@@ -1,0 +1,47 @@
+{
+  "index": "行为型模式概述",
+  "chain-of-responsibility": {
+    "title": "责任链模式",
+    "type": "page"
+  },
+  "command": {
+    "title": "命令模式",
+    "type": "page"
+  },
+  "interpreter": {
+    "title": "解释器模式",
+    "type": "page"
+  },
+  "iterator": {
+    "title": "迭代器模式",
+    "type": "page"
+  },
+  "mediator": {
+    "title": "中介者模式",
+    "type": "page"
+  },
+  "memento": {
+    "title": "备忘录模式",
+    "type": "page"
+  },
+  "observer": {
+    "title": "观察者模式",
+    "type": "page"
+  },
+  "state": {
+    "title": "状态模式",
+    "type": "page"
+  },
+  "strategy": {
+    "title": "策略模式",
+    "type": "page"
+  },
+  "template-method": {
+    "title": "模板方法模式",
+    "type": "page"
+  },
+  "visitor": {
+    "title": "访问者模式",
+    "type": "page"
+  }
+}
