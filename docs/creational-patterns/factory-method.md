@@ -47,368 +47,207 @@
 只要产品类实现一个共同的接口， 你就可以将其对象传递给客户代码， 而无需提供额外数据。
 调用工厂方法的代码 （通常被称为客户端代码） 无需了解不同子类返回实际对象之间的差别。 客户端将所有产品视为抽象的 运输 。 客户端知道所有运输对象都提供 交付方法， 但是并不关心其具体实现方式。
 
-### 2.1 定义
+### 问题 2
 
-单例模式的核心是**确保一个类只有一个实例**，并提供一个访问该实例的全局入口点。这对于需要在整个系统中共享状态或配置信息的场景十分有用。
+假如你正在开发一个游戏，其中需要创建各种类型的敌人，例如：兽人，精灵，巫师等。每个敌人都有自己的属性和行为，例如：兽人具有高攻击力，精灵具有高敏捷度，巫师具有高魔法值。如果直接在游戏中使用 new 创建敌人对象，代码就会变得混乱且难以维护。
+
+```js
+// 不使用工厂方法模式
+const orc = new Orc();
+const elf = new Elf();
+const troll = new Troll();
+```
+
+如果需要添加新的敌人类型，就需要修改游戏中的代码，这样就违反了开闭原则
+
+:::tip 扩展: 开闭原则
+开闭原则 (Open/Closed Principle, OCP) 是面向对象设计中的一个重要原则，其核心思想是：
+
+软件实体（类、模块、函数等）应该对扩展开放，对修改关闭。
+
+这意味着，一个软件实体应该可以通过扩展来实现新的功能，而不是通过修改其现有的代码来实现。
+
+更详细的解释：
+
+对扩展开放: 指当需要添加新功能时，可以通过添加新的代码（例如新的类或方法）来实现，而不需要修改现有的代码。 这体现了设计的可扩展性，能够适应未来的需求变化。
+
+对修改关闭: 指一旦一个软件实体完成开发并测试通过，就不应该对其进行修改，除非是为了修复 bug。 这保证了软件的稳定性，减少了引入新错误的风险。
+:::
+
+### 解决方案 2
+
+工厂方法模式引入了一个抽象的工厂类, 定义了创建敌人对象的接口，具体的敌人创建逻辑由子类来实现
+
+### 2.1 真实世界类比
+
+汽车工厂就是一个很好的例子。汽车工厂可以生产各种类型的汽车，例如：轿车、SUV、卡车等。每种类型的汽车都有其特定的生产流程。汽车工厂相当于抽象工厂类，而生产不同类型汽车的车间相当于具体工厂类。
+
+### 2.2 定义
+
+工厂方法模式定义了一个创建对象的接口，但由子类决定要实例化的类是哪一个。工厂方法让类把实例化推迟到子类。
 
 ### 2.2 特点
 
-- **唯一性**：整个应用程序中只能存在一个实例。
-- **全局访问**：提供一个全局访问点，所有模块都能方便地访问该实例。
-- **可扩展性**：可以根据需要延迟实例化，并在实例内部扩展功能。
+- 遵循开闭原则: 扩展新产品时无需修改现有代码。
+- 封装创建逻辑: 将对象的创建逻辑与使用逻辑分离。
+- 支持多态: 可以使用不同的工厂创建不同类型的对象。
 
 ### 2.3 实现方式
 
 #### 2.3.1 使用闭包和立即执行函数（IIFE）
 
 ```js
-const Singleton = (function () {
-  // 私有变量，存储单例实例
-  let instance;
-
-  // 私有方法，用于创建实例
-  function init() {
-    // 定义单例的属性和方法
-    return {
-      // 示例属性
-      _state: {},
-
-      // 获取状态
-      getState: function () {
-        return this._state;
-      },
-
-      // 设置状态
-      setState: function (key, value) {
-        this._state[key] = value;
-      },
-    };
-  }
-
-  // 公有方法，获取单例实例
-  return {
-    getInstance: function () {
-      if (!instance) {
-        instance = init();
-      }
-      return instance;
-    },
-  };
-})();
-
-// 测试代码
-const instance1 = Singleton.getInstance();
-const instance2 = Singleton.getInstance();
-
-instance1.setState("name", "Singleton Instance");
-
-console.log(instance2.getState()); // 输出: { name: 'Singleton Instance' }
-console.log(instance1 === instance2); // 输出: true
-```
-
-#### 2.3.2 使用类的静态属性
-
-```js
-class Singleton {
-  constructor() {
-    if (Singleton.instance) {
-      // 如果实例已经存在，直接返回
-      return Singleton.instance;
-    }
-    // 初始化实例
-    this._state = {};
-    Singleton.instance = this; // 存储实例
-  }
-
-  // 获取状态
-  getState() {
-    return this._state;
-  }
-
-  // 设置状态
-  setState(key, value) {
-    this._state[key] = value;
+// 抽象工厂类
+class EnemyFactory {
+  createEnemy() {
+    throw new Error("子类必须实现 createEnemy 方法");
   }
 }
 
-// 测试代码
-const instance1 = new Singleton();
-const instance2 = new Singleton();
+// 具体工厂类
+class OrcFactory extends EnemyFactory {
+  createEnemy() {
+    return new Orc();
+  }
+}
 
-instance1.setState("language", "JavaScript");
+class ElfFactory extends EnemyFactory {
+  createEnemy() {
+    return new Elf();
+  }
+}
 
-console.log(instance2.getState()); // 输出: { language: 'JavaScript' }
-console.log(instance1 === instance2); // 输出: true
+class TrollFactory extends EnemyFactory {
+  createEnemy() {
+    return new Troll();
+  }
+}
+
+// 游戏中使用工厂创建敌人
+const orcFactory = new OrcFactory();
+const orc = orcFactory.createEnemy();
+
+const elfFactory = new ElfFactory();
+const elf = elfFactory.createEnemy();
+
+const trollFactory = new TrollFactory();
+const troll = trollFactory.createEnemy();
 ```
 
-#### 扩展知识点 类的静态属性
-
-在 JavaScript 中，类实际上是语法糖，本质上是基于原型的构造函数。类本身就是一个特殊的函数，因此可以像使用对象一样，动态地向类添加属性和方法。
-
-当您在类中使用 ConfigManager.instance 时，实际上是在向类本身（构造函数）添加一个静态属性 instance。
+这个时候可能就会有问题了, 感觉这段代码跟上面的
 
 ```js
-class ConfigManager {
-  constructor() {
-    // 检查类的静态属性 instance 是否已存在
-    if (ConfigManager.instance) {
-      return ConfigManager.instance;
-    }
+// 不使用工厂方法模式
+const orc = new Orc();
+const elf = new Elf();
+const troll = new Troll();
+```
 
-    // 初始化配置
-    this._config = {
-      apiBaseUrl: "https://api.example.com",
-      timeout: 5000,
-      retryAttempts: 3,
-    };
+也没什么区别呢, 看似工厂模式只是显得更加的多余，其实关键区别在于代码的可扩展性和可维护性, 尤其体现在新增类型和修改创建逻辑的时候
 
-    // 将当前实例赋值给类的静态属性 instance
-    ConfigManager.instance = this;
-  }
+直接实例化 (new Orc()) 的问题：
 
-  // 获取配置
-  getConfig(key) {
-    return this._config[key];
-  }
+- 紧耦合：游戏代码直接依赖于具体的 Orc， Elf， Troll 类，如果将来要添加一个新的敌人类型，就必须要修改游戏代码， 添加 `new Dragon()`， 这违反了开闭原则。
+- 创建逻辑分散：如果创建 Orc 的逻辑比较复杂 (例如需要初始化属性，设置技能，根据游戏等级，地图属性等)，那么这些逻辑就会分散在游戏代码中，不利于维护和修改。
+- 难以切换实现：如果想想吧 Orc 的实现换乘另外一种实现，例如：`new Orc2()`，那么就需要修改游戏代码，将 `new Orc()` 改为 `new Orc2()`，这样就会导致代码的耦合度增加 并且容易出错。
 
-  // 设置配置
-  setConfig(key, value) {
-    this._config[key] = value;
-  }
+工厂方法模式的优势:
 
-  // 获取所有配置
-  getAllConfigs() {
-    return this._config;
-  }
+- 低耦合： 游戏代码只依赖于抽象的 `EnemyFactory` 接口，不依赖于具体的 OrcFactory， ElfFactory， TrollFactory，新增敌人类型，只需要添加一个新的工厂类(例如：`DragonFactory`)，不需要修改游戏代码。符合开闭原则
+
+- 集中创建逻辑: 每个工厂类负责各自类型的对象的创建逻辑，例如：`OrcFactory` 负责创建 `Orc` 对象，`ElfFactory` 负责创建 `Elf` 对象，`TrollFactory` 负责创建 `Troll` 对象，这样创建逻辑就集中在工厂类中，不会分散在游戏代码中。
+
+- 易于切换和实现：如果想要切换 Orc 的实现，只需要修改 `OrcFactory` 中的创建逻辑，例如：`return new Orc2()`，不需要修改游戏代码。如果想要添加新的敌人类型，只需要添加一个新的工厂类，不需要修改游戏代码。
+
+#### 具体举例说明
+
+假设创建 Orc 类需要根据游戏难度进行不同的初始化
+
+直接实例化:
+
+```js
+let orc;
+if (difficulty === "easy") {
+  orc = new Orc(100, 10); // 100 生命值，10 攻击力
+} else {
+  orc = new Orc(200, 20); // 200 生命值，20 攻击力
 }
 ```
 
-在上述代码中，虽然没有显式声明 ConfigManager.instance，但在 JavaScript 中，可以直接在类（构造函数）上添加或访问属性。也就是说，ConfigManager 作为一个函数对象，可以动态添加属性 instance。
+如果多个地方需要创建 Orc 对象，那么这段代码就会重复出现，不利于维护和修改。
+
+工厂方法模式
+
+```js
+class OrcFactory extends EnemyFactory {
+  createEnemy() {
+    if (difficulty === "easy") {
+      return new Orc(100, 10);
+    } else {
+      return new Orc(200, 20);
+    }
+  }
+}
+
+// 使用工厂创建 Orc
+const orcFactory = new OrcFactory();
+const orc = orcFactory.createEnemy();
+```
+
+创建逻辑被封装在 OrcFactory 中，游戏代码只需要调用 orcFactory.createEnemy() 即可。
+
+#### 总结
+
+在简单的例子中，工厂方法模式的优势可能不明显。但随着项目规模的扩大和复杂度的增加，它的优势就会逐渐体现出来。它使得代码更具可扩展性、可维护性和灵活性，更符合面向对象设计的原则。
+
+工厂方法模式的核心目的之一就是封装对象的创建逻辑，防止创建逻辑分散在代码的各个角落，从而提高代码的可维护性和可扩展性。
 
 ### 2.3 适用场景
 
-- **配置管理器**：需要在全局范围内共享和管理配置信息。
-- **日志记录器**：全局统一的日志记录机制，方便调试和监控。
-- **缓存系统**：在内存中缓存数据，提高性能。
-- **发布订阅**：通过单例模式实现发布订阅。
-- **数据库连接池**：管理数据库连接，避免重复创建连接。
+- 当一个类不知道它所必须创建的对象的类的时候。
+- 当一个类希望由它的子类来指定它所创建的对象的时候。
+- 当类将创建对象的职责委托给多个帮助子类中的某一个，并且你希望将哪一个帮助子类是代理者这一信息局部化的时候。
 
-## 3. 单例模式的实际应用
+## 3. 工厂的实际应用
 
-### 3.1 配置管理器
+### 3.1 文档处理
 
 ```js
-class ConfigManager {
-  constructor() {
-    if (ConfigManager.instance) {
-      return ConfigManager.instance;
-    }
-    this._config = {
-      apiBaseUrl: "https://api.example.com",
-      timeout: 5000,
-      retryAttempts: 3,
-    };
-    ConfigManager.instance = this;
-  }
-
-  // 获取配置
-  getConfig(key) {
-    return this._config[key];
-  }
-
-  // 设置配置
-  setConfig(key, value) {
-    this._config[key] = value;
-  }
-
-  // 获取所有配置
-  getAllConfigs() {
-    return this._config;
+// 抽象文档类
+class Document {
+  constructor(content) {
+    this.content = content;
   }
 }
 
-// 测试代码
-const configManager1 = new ConfigManager();
-const configManager2 = new ConfigManager();
+// 具体文档类
+class WordDocument extends Document {}
+class PdfDocument extends Document {}
 
-console.log(configManager1 === configManager2); // 输出: true
-
-// 修改配置
-configManager1.setConfig("timeout", 10000);
-
-// 获取配置
-console.log(configManager2.getConfig("timeout")); // 输出: 10000
-```
-
-### 3.2 发布订阅
-
-发布订阅模式和单例模式是两个独立的设计模式，它们各自解决不同的问题
-
-- 发布订阅模式：用于处理对象之间的一对多关系，实现松耦合的事件通信机制
-- 单例模式：确保一个类只有一个实例，并提供一个全局访问点
-
-但在实际应用中，发布订阅系统可以使用单例模式来实现
-
-- 全局唯一性：确保所有发布者和订阅者使用同一个事件总线
-- 状态管理：统一管理订阅关系和事件分发
-- 资源效率：避免创建多个事件处理实例
-
-```js
-class PubSub {
-  // 私有实例
-  static #instance = null;
-  // 存储所有事件
-  #events = {};
-
-  // 私有构造函数
-  constructor() {
-    if (PubSub.#instance) {
-      return PubSub.#instance;
-    }
-    PubSub.#instance = this;
-  }
-
-  // 获取单例实例
-  static getInstance() {
-    if (!PubSub.#instance) {
-      PubSub.#instance = new PubSub();
-    }
-    return PubSub.#instance;
-  }
-
-  // 订阅事件
-  subscribe(eventName, callback) {
-    if (!this.#events[eventName]) {
-      this.#events[eventName] = [];
-    }
-    this.#events[eventName].push(callback);
-  }
-
-  // 发布事件
-  publish(eventName, data) {
-    if (!this.#events[eventName]) {
-      return;
-    }
-    this.#events[eventName].forEach((callback) => callback(data));
-  }
-
-  // 取消订阅
-  unsubscribe(eventName, callback) {
-    if (!this.#events[eventName]) {
-      return;
-    }
-    this.#events[eventName] = this.#events[eventName].filter(
-      (cb) => cb !== callback
-    );
+// 抽象文档工厂类
+class DocumentFactory {
+  createDocument(content) {
+    throw new Error("子类必须实现 createDocument 方法");
   }
 }
 
-// 测试代码
-
-// 获取PubSub实例
-const pubsub1 = PubSub.getInstance();
-const pubsub2 = PubSub.getInstance();
-
-// pubsub1 和 pubsub2 是同一个实例
-console.log(pubsub1 === pubsub2); // true
-
-// 订阅消息
-pubsub1.subscribe("userLogin", (data) => {
-  console.log("用户登录:", data);
-});
-
-// 发布消息
-pubsub2.publish("userLogin", { userId: 123, username: "adny" });
-```
-
-### 3.3 创建数据库连接
-
-```js
-const { MongoClient } = require("mongodb");
-
-class Database {
-  // 静态属性，用于存储唯一实例
-  static instance = null;
-
-  constructor() {
-    if (Database.instance) {
-      // 如果实例已存在，直接返回
-      return Database.instance;
-    }
-
-    // 初始化数据库配置
-    this._config = {
-      url: "mongodb://localhost:27017",
-      dbName: "myDatabase",
-    };
-
-    this._client = null; // MongoClient 实例
-    this._db = null; // 数据库实例
-
-    Database.instance = this; // 缓存当前实例
-  }
-
-  // 连接到数据库
-  async connect() {
-    if (!this._client) {
-      try {
-        this._client = await MongoClient.connect(this._config.url, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        });
-        console.log("数据库连接成功");
-
-        this._db = this._client.db(this._config.dbName);
-      } catch (error) {
-        console.error("数据库连接失败", error);
-        throw error;
-      }
-    }
-    return this._db;
-  }
-
-  // 获取数据库实例
-  getDB() {
-    if (!this._db) {
-      throw new Error("尚未连接到数据库，请先调用 connect() 方法");
-    }
-    return this._db;
-  }
-
-  // 关闭数据库连接
-  async close() {
-    if (this._client) {
-      await this._client.close();
-      this._client = null;
-      this._db = null;
-      console.log("数据库连接已关闭");
-    }
+// 具体文档工厂类
+class WordDocumentFactory extends DocumentFactory {
+  createDocument(content) {
+    return new WordDocument(content);
   }
 }
 
-// 测试代码
+class PdfDocumentFactory extends DocumentFactory {
+  createDocument(content) {
+    return new PdfDocument(content);
+  }
+}
 
-// 创建两个实例
-const dbInstance1 = new Database();
-const dbInstance2 = new Database();
+// 使用工厂创建文档
+const wordFactory = new WordDocumentFactory();
+const wordDoc = wordFactory.createDocument("Word文档内容");
 
-console.log("两个实例是否相同:", dbInstance1 === dbInstance2); // 输出: true
-
-// 连接到数据库
-await dbInstance1.connect();
-
-// 获取数据库实例
-const db1 = dbInstance1.getDB();
-const db2 = dbInstance2.getDB();
-
-console.log("两个数据库实例是否相同:", db1 === db2); // 输出: true
-
-// 进行数据库操作，例如插入数据
-const collection = db1.collection("users");
-
-const result = await collection.insertOne({ name: "张三", age: 28 });
-console.log("插入结果:", result.insertedId);
-
-// 关闭数据库连接
-await dbInstance1.close();
+const pdfFactory = new PdfDocumentFactory();
+const pdfDoc = pdfFactory.createDocument("PDF文档内容");
 ```
