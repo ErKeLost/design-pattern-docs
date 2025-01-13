@@ -2,7 +2,7 @@
 
 ## 1. 引言
 
-抽象工厂模式是一种创建型设计模式， 它能创建一系列相关的对象， 而无需指定其具体类。
+抽象工厂模式（Abstract Factory Pattern）是一种创建型设计模式，它提供了一个接口，用于创建一系列相关或相互依赖的对象，而无需指定它们的具体类。通过使用抽象工厂，客户端代码可以独立于具体的产品类进行操作，从而实现系统的可扩展性和灵活性。
 
 ![](https://refactoringguru.cn/images/patterns/content/abstract-factory/abstract-factory-zh-2x.png)
 
@@ -50,16 +50,19 @@
 
 #### 1. 目的和意图
 
-工厂方法模式（Factory Method）：
+- 工厂方法模式（Factory Method）:
+
 目的：定义一个用于创建对象的接口，让子类决定实例化哪个类。
 意图：通过子类化来延迟实例化到子类，从而使得一个类的实例化延迟到其子类。
-抽象工厂模式（Abstract Factory）：
+
+- 抽象工厂模式（Abstract Factory）：
+
 目的：提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。
 意图：封装一组具有相同主题或目的的对象的创建，使得系统独立于这些对象的创建、组合和表示。
 
 #### 2. 结构
 
-工厂方法模式：
+- 工厂方法模式：
 
 通常涉及一个抽象产品和具体产品，以及一个抽象工厂和具体工厂。
 关键组件：
@@ -67,7 +70,8 @@
 具体产品（ConcreteProduct）：实现产品接口的具体类。
 工厂接口（Creator）：声明工厂方法，返回产品接口。
 具体工厂（ConcreteCreator）：实现工厂方法，返回具体产品实例。
-抽象工厂模式：
+
+- 抽象工厂模式：
 
 包含多个产品族，每个产品族可以有多个不同类型的产品。
 关键组件：
@@ -91,5 +95,116 @@
 
 #### 4. 示例
 
-工厂方法模式示例
-假设我们有一个日志记录系统，不同的日志记录器（如文件日志记录器、数据库日志记录器）需要被创建。
+1. 工厂方法模式示例
+
+以家具商店模拟器为例
+
+```js
+// 抽象产品：椅子
+class Chair {
+  constructor() {
+    if (this.constructor === Chair) {
+      throw new Error('抽象类不能被实例化');
+    }
+  }
+
+  sitOn() {
+    throw new Error('抽象方法必须被实现');
+  }
+}
+
+// 具体产品：现代椅子
+class ModernChair extends Chair {
+  sitOn() {
+    console.log('坐在现代椅子上');
+  }
+}
+
+// 具体产品：维多利亚椅子
+class VictorianChair extends Chair {
+  sitOn() {
+    console.log('坐在维多利亚椅子上');
+  }
+}
+
+
+// 抽象产品：沙发
+class Sofa {
+  constructor() {
+    if (this.constructor === Sofa) {
+      throw new Error('抽象类不能被实例化');
+    }
+  }
+  relaxOn() {
+    throw new Error('抽象方法必须被实现');
+  }
+}
+
+// 具体产品：现代沙发
+class ModernSofa extends Sofa {
+  relaxOn() {
+    console.log('躺在现代沙发上');
+  }
+}
+
+// 具体产品：维多利亚沙发
+class VictorianSofa extends Sofa {
+  relaxOn() {
+    console.log('躺在维多利亚沙发上');
+  }
+}
+
+// 抽象工厂
+class FurnitureFactory {
+  constructor() {
+    if (this.constructor === FurnitureFactory) {
+      throw new Error('抽象类不能被实例化');
+    }
+  }
+
+  createChair() {
+    throw new Error('抽象方法必须被实现');
+  }
+
+  createSofa() {
+    throw new Error('抽象方法必须被实现');
+  }
+}
+
+// 具体工厂：现代家具工厂
+class ModernFurnitureFactory extends FurnitureFactory {
+  createChair() {
+    return new ModernChair();
+  }
+
+  createSofa() {
+    return new ModernSofa();
+  }
+}
+
+// 具体工厂：维多利亚家具工厂
+class VictorianFurnitureFactory extends FurnitureFactory {
+  createChair() {
+    return new VictorianChair();
+  }
+
+  createSofa() {
+    return new VictorianSofa();
+  }
+}
+
+// 客户端代码
+function clientCode(factory) {
+  const chair = factory.createChair();
+  const sofa = factory.createSofa();
+
+  chair.sitOn();
+  sofa.relaxOn();
+}
+
+// 使用现代家具工厂
+clientCode(new ModernFurnitureFactory());
+
+// 使用维多利亚家具工厂
+clientCode(new VictorianFurnitureFactory());
+```

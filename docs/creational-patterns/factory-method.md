@@ -2,7 +2,7 @@
 
 ## 1. 引言
 
-**单例模式（Singleton Pattern）** 是一种创建型设计模式，它确保一个类只有一个实例，并提供一个全局访问点。本文将详细讲解单例模式在 JavaScript 中的多种实现方式，并配以实际应用的示例，帮助您深入理解并灵活运用于项目中。
+**工厂方法**模式是一种创建型设计模式， 其在父类中提供一个创建对象的方法， 允许子类决定实例化对象的类型。
 
 ![alt text](https://refactoringguru.cn/images/patterns/content/factory-method/factory-method-zh.png)
 

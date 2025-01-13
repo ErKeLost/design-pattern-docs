@@ -67,8 +67,8 @@ export default defineConfig({
               link: '/creational-patterns/abstract-factory',
             },
             {
-              text: '建造者模式',
-              link: '/creational-patterns/builder',
+              text: '生成器模式',
+              link: '/creational-patterns/generator',
             },
             {
               text: '原型模式',

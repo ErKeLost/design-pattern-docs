@@ -12,8 +12,8 @@
     "title": "抽象工厂模式",
     "type": "page"
   },
-  "builder": {
-    "title": "建造者模式",
+  "generator": {
+    "title": "生成器模式",
     "type": "page"
   },
   "prototype": {
