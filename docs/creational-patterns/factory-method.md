@@ -202,6 +202,110 @@ const orc = orcFactory.createEnemy();
 
 工厂方法模式的核心目的之一就是封装对象的创建逻辑，防止创建逻辑分散在代码的各个角落，从而提高代码的可维护性和可扩展性。
 
+让我们再来一个复杂的场景
+
+- 1.抽象工厂接口
+
+```js
+class EnemyFactory {
+  createEnemy(level) {
+    // 添加 level 参数
+    throw new Error("子类必须实现 createEnemy 方法");
+  }
+}
+```
+
+- 2.具体工厂类
+
+```js
+class OrcFactory extends EnemyFactory {
+  createEnemy(level) {
+    switch (level) {
+      case 1:
+        return new LowLevelOrc();
+      case 2:
+        return new MidLevelOrc();
+      case 3:
+        return new HighLevelOrc();
+      default:
+        throw new Error("Invalid Orc level");
+    }
+  }
+}
+
+// ElfFactory 和 TrollFactory 类似 (略) ...
+```
+
+- 3.具体敌人类
+
+```js
+class LowLevelOrc {
+  constructor() {
+    this.health = 100;
+    this.attack = 10;
+    this.skills = ["近战攻击"];
+  }
+}
+
+class MidLevelOrc extends LowLevelOrc {
+  // 继承低级兽人，扩展属性和技能
+  constructor() {
+    super();
+    this.health = 150;
+    this.attack = 15;
+    this.skills.push("重击");
+  }
+}
+
+class HighLevelOrc extends MidLevelOrc {
+  // 继承中级兽人，扩展属性和技能
+  constructor() {
+    super();
+    this.health = 200;
+    this.attack = 20;
+    this.skills.push("狂暴");
+  }
+}
+
+// 其他等级的 Elf 和 Troll 类似 (略) ...
+```
+
+最后的使用方式
+
+```js
+const difficulty = 3; // 获取游戏难度
+let factory;
+
+if (enemyType === "orc") {
+  factory = new OrcFactory();
+} else if (enemyType === "elf") {
+  // factory = new ElfFactory();
+} // ...
+
+const enemy = factory.createEnemy(difficulty); // 根据难度创建敌人
+```
+
+如果不使用工厂方法模式的话
+
+```js
+let enemy;
+if (enemyType === "orc") {
+  if (level === 1) {
+    enemy = new LowLevelOrc();
+  } else if (level === 2) {
+    enemy = new MidLevelOrc();
+  } else if (level === 3) {
+    enemy = new HighLevelOrc();
+  } // ...
+} else if (enemyType === "elf") {
+  if (level === 1) {
+    enemy = new LowLevelElf();
+  } // ...  (大量的 if/else 判断)
+} // ...  (更多敌人类型的判断)
+
+// 在其他需要创建敌人的地方，需要重复上面的逻辑
+```
+
 ### 2.3 适用场景
 
 - 当一个类不知道它所必须创建的对象的类的时候。
